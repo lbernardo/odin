@@ -1,0 +1,16 @@
+create:
+  directories: # Create directories for project
+   - cmd
+   - internal
+   - internal/primary
+   - internal/secondary
+   - pkg
+   - pkg/handler
+   - pkg/models
+   - pkg/repositories
+  files: # Create files for project
+   - $resource/default/main.tpl:cmd/main.go
+resources: ./ # Absolute Path of templates
+
+
+

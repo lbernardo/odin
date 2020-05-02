@@ -1,0 +1,21 @@
+create:
+  directories: # Create directories for project
+   - cmd
+   - internal
+   - internal/primary
+   - internal/secondary
+   - pkg
+   - pkg/handler
+   - pkg/models
+   - pkg/repositories
+resources: ./ # Absolute Path of templates
+commands:
+    handler:
+      args:
+        name : "Name of handler"
+      copy:
+        $resource/handler.temp: pkg/handler/$name
+
+
+
+
