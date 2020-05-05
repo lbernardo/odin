@@ -7,3 +7,7 @@ type OdinConfig struct {
 type Config struct {
 	Default string `yaml:"default"`
 }
+
+type ProjectConfig struct {
+	Pkg string
+}

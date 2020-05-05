@@ -20,21 +20,28 @@ import (
 
 	"github.com/lbernardo/odin/pkg/handler"
 	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
 )
 
 // createCmd represents the create command
 var createCmd = &cobra.Command{
-	Use:   "create",
+	Use:   "create [name] [pkg]",
 	Short: "Create new project",
 	Args: func(cmd *cobra.Command, args []string) error {
 		if len(args) < 1 {
 			return errors.New("requires a name project")
 		}
+		if len(args) < 2 {
+			return errors.New("requires a package project")
+		}
 		return nil
 	},
 	Run: func(cmd *cobra.Command, args []string) {
 		name := args[0]
-		handler.NewCreateCmd(Box).CreateProject(name)
+		pkg := args[1]
+		viper.Set("ODIN_PROJECT", name)
+		viper.Set("ODIN_PKG", pkg)
+		handler.NewCreateCmd(Box).CreateProject(name, pkg)
 	},
 }
 

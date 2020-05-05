@@ -9,8 +9,8 @@ create:
    - pkg/models
    - pkg/repositories
   files: # Create files for project
-   - $resource/default/main.tpl:cmd/main.go
-resources: ./ # Absolute Path of templates
+   - ${resource}/default/main.tpl:cmd/main.go
+resource: ./ # Absolute Path of templates
 
 
 

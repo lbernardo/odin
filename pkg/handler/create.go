@@ -1,7 +1,7 @@
 package handler
 
 import (
-	"fmt"
+	"strings"
 
 	"github.com/gobuffalo/packr/v2"
 	"github.com/lbernardo/odin/internal"
@@ -28,8 +28,14 @@ func NewCreateCmd(box *packr.Box) *CreateCmd {
 	}
 }
 
-func (cc *CreateCmd) CreateProject(name string) {
+func (cc *CreateCmd) CreateProject(name, pkg string) {
 	internal.CreatePaths("", []string{name})
 	internal.CreatePaths(name, cc.module.Create.Directories)
-	fmt.Println(cc.module.Create.Files)
+	for _, v := range cc.module.Create.Files {
+		pt := strings.Split(v, ":")
+		internal.CopyFile(pt[0], pt[1], cc.module, cc.box, nil)
+	}
+
+	internal.CreateConfigProject(name, models.ProjectConfig{Pkg: pkg})
+
 }

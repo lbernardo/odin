@@ -8,14 +8,26 @@ create:
    - pkg/handler
    - pkg/models
    - pkg/repositories
-resources: ./ # Absolute Path of templates
+  files: # Create files for project
+   - ${resource}/main.tpl:cmd/main.go
+resource: ./ # Absolute Path of templates
 commands:
-    handler:
-      args:
-        name : "Name of handler"
-      copy:
-        $resource/handler.temp: pkg/handler/$name
-
+  - cmd: handler
+    description: "Create new handler"
+    args:
+      - name: name
+        description: Name of handler
+    #directories: #create directories for command
+    #  - 
+    files:
+      - ${resource}/handler.tpl:pkg/handler/${name}.go
+  - cmd: model
+    description: "Create new model"
+    args:
+      - name: name
+        description: Name of model
+    files:
+      - ${resource}/model.tpl:pkg/models/${name}.go
 
 
 
