@@ -1,3 +1,4 @@
+resource: ./ # Absolute Path of templates
 create:
   directories: # Create directories for project
    - cmd
@@ -10,7 +11,6 @@ create:
    - pkg/repositories
   files: # Create files for project
    - ${resource}/main.tpl:cmd/main.go
-resource: ./ # Absolute Path of templates
 commands:
   - cmd: handler
     description: "Create new handler"

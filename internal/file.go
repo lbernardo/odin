@@ -61,7 +61,7 @@ func CopyFile(o, d string, module models.Module, box *packr.Box, args map[string
 		o = strings.ReplaceAll(o, "${resource}", "")
 		content, _ = box.FindString(o)
 	} else {
-		o = strings.ReplaceAll(o, "$resource", module.Resource)
+		o = strings.ReplaceAll(o, "${resource}", module.Resource)
 		dat, err := ioutil.ReadFile(o)
 		if err != nil {
 			fmt.Println("Error to read ", o)

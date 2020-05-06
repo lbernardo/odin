@@ -47,13 +47,14 @@ func NewCommand(box *packr.Box, cmd models.Command, flags *pflag.FlagSet) {
 }
 
 func (cc *Command) executeCmd() {
+	for _, d := range cc.cmd.Directories {
+		internal.CreatePaths(cc.project, []string{d})
+	}
 	for _, f := range cc.cmd.Files {
 		p := strings.Split(cc.replaceVars(f), ":")
 		internal.CopyFile(p[0], p[1], cc.module, cc.box, cc.getArgs())
 	}
-	for _, d := range cc.cmd.Directories {
-		internal.CreatePaths(cc.project, []string{d})
-	}
+
 }
 
 func (cc *Command) replaceVars(content string) string {
