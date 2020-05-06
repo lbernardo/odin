@@ -1,15 +1,15 @@
 # Odin - Project Creator
-Odin template for create your project creator
+Odin template for creating your project creator
 
-### Configure odin
+### Configure Odin
 ```bash
-odin start
+Odin start
 ```
-This command will create odin settings on your computer 
+This command will create Odin settings on your computer 
 ```bash
 $HOME/.odin/config.yml
 ```
-### Cli
+### CLI
 ```bash
 $ odin --help
 Create your application
@@ -18,10 +18,10 @@ Usage:
   odin [command]
 
 Available Commands:
-  config      Configure odin
-  create      Create new project
+  config      Configure Odin
+  create      Create a new project
   help        Help about any command
-  start       Use for start configurations odin
+  start       Use for start configurations Odin
 
 Flags:
   -h, --help   help for odin
@@ -29,7 +29,7 @@ Flags:
 Use "odin [command] --help" for more information about a command.
 ```
 
-Odin use modules for struct projects. The confige default it is **$HOME/.odin/modules/default.yml**
+Odin uses modules for project struct. The config default it is **$HOME/.odin/modules/default.yml**
 ```yaml
 create:
   directories: # Create directories for project
@@ -46,11 +46,11 @@ create:
 resource: ./ # Absolute Path of templates
 ```
 
-- create > directories : Created directories when execute command for create project
+- create > directories: Created directories when executing command for creating project
 - create > files: Created files with  templates based in resources
 - resources: Absolute path of templates
 
-### Command for create my project
+### Command to create my project
 ```bash
 $ odin create myproject  github.com/lbernardo/myproject
 Created  myproject
@@ -67,13 +67,13 @@ Created  myproject/cmd/main.go
 The command read the module's default settings to know which directories and files to create must be created and which files to create
 
 ## Create your module
-To create your own project module, use the command below
+To create your  project module, use the command below
 ```bash
 $ odin config module module1       
 Created file $HOME/.odin/modules/module1.yml
 Edit $HOME/.odin/modules/module1.yml
 ```
-Edit your module for create your struct
+Edit your module to create your struct
 
 ```yaml
 create:
@@ -88,7 +88,7 @@ create:
    - pkg/repositories
   files: # Create files for project
    - ${resource}/main.tpl:cmd/main.go
-resource: ./ # Absolute Path of templates
+resource: /home/lbernardo/workspace/mytemplate # Absolute Path of templates
 commands:
   - cmd: handler
     description: "Create new handler"
@@ -108,4 +108,156 @@ commands:
       - ${resource}/model.tpl:pkg/models/${name}.go
 ```
 **Is required create your  resource path  and alter config with absolute path**
+
+For example:
+
+/home/lbernardo/workspace/mytemplate/handler.tpl
+```
+package handler
+
+type ${name} struct {
+    
+}
+
+func New${name}() *${name} {
+    return &${name}{
+        
+    }
+}
+```
+
+When to execute **odin create handler --name MyHandler** your create:
+```go
+package handler
+
+type MyHandler struct {
+    
+}
+
+func NewMyHandler() *MyHandler {
+    return &MyHandler{
+        
+    }
+}
+```
+
+**use ${VARIABLE} for replacing arguments on the command**
+
+### Create new Command
+For creating a new command, on your **$HOME/.odin/modules/{MODULE}.yml** create next struct
+```yaml
+# ....
+commands:
+  - cmd: {NAME TO COMMAND (required)}
+    description: {DESCRIPTION TO COMMAND (required)}
+    args: # Array of arguments 
+      - name: {NAME TO ARGUMENT (required)}
+        description: {DESCRIPTION TO ARGUMENT (required)}
+        value: {VALUE TO DEFAULT ARG}
+    directories: # List of directories for created
+      - 
+      -
+      -
+    files: # List of files for created with the base template. Use ${resource} and ${VARIABLE NAME}. ${resource} is required.
+      - ${resource}/handler.tpl:pkg/handler/${VARIABLE NAME}.go
+```
+
+Example:
+**$HOME/.odin/modules/mymodule.yml**
+```
+create:
+  directories: # Create directories for project
+   - cmd
+   - internal
+   - internal/primary
+   - internal/secondary
+   - pkg
+   - pkg/handler
+   - pkg/models
+   - pkg/repositories
+resource: /home/lbernardo/workspace/mytemplate # Absolute Path of templates
+commands:
+  - cmd: example
+    description: "Create my example"
+    args: # Array of arguments 
+      - name: name
+        description: "Name"
+     -  name: lastname
+        description: "Lastname"
+    directories: # List of directories for created
+      - cmd/cli
+      - cmd/http
+    files: # List of files for created with the base template. Use ${resource} and ${VARIABLE NAME}. ${resource} is required.
+      - ${resource}/cli/main.go:cmd/cli/main.go
+      - ${resource}/http/main.go:cmd/http/main.go
+```
+
+**/home/lbernardo/workspace/mytemplate/cli/main.go**
+```
+package main
+
+import "fmt"
+
+func main() {
+    fmt.Println("${name} ${lastname}")
+}
+```
+**/home/lbernardo/workspace/mytemplate/http/main.go**
+```
+package main
+
+import (
+    "fmt"
+    "log"
+    "net/http"
+)
+
+func handler(w http.ResponseWriter, r *http.Request) {
+    fmt.Fprintf(w, "Hi ${name} ${lastname}")
+}
+
+func main() {
+    http.HandleFunc("/", handler)
+    log.Fatal(http.ListenAndServe(":8080", nil))
+}
+```
+
+**Execute**
+```
+$ odin example --name "Lucas" --lastname "Bernardo"
+```
+
+**cmd/cli/main.go**
+```
+package main
+
+import "fmt"
+
+func main() {
+    fmt.Println("Lucas Bernardo")
+}
+```
+
+**cmd/http/main.go**
+```
+package main
+
+import (
+    "fmt"
+    "log"
+    "net/http"
+)
+
+func handler(w http.ResponseWriter, r *http.Request) {
+    fmt.Fprintf(w, "Hi Lucas Bernardo")
+}
+
+func main() {
+    http.HandleFunc("/", handler)
+    log.Fatal(http.ListenAndServe(":8080", nil))
+}
+```
+
+
+
 
