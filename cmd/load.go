@@ -16,6 +16,8 @@ limitations under the License.
 package cmd
 
 import (
+	"os"
+
 	"github.com/lbernardo/odin/internal"
 	"github.com/lbernardo/odin/pkg/handler"
 	"github.com/lbernardo/odin/pkg/models"
@@ -25,27 +27,30 @@ import (
 
 func LoadCommands() {
 
-	var configModels models.OdinConfig
-	viper.Unmarshal(&configModels)
-	yml := internal.ReadYaml(viper.GetString("ODIN_DIR") + "/modules/" + configModels.Config.Default)
-	var c *cobra.Command
-	var a models.Args
-	for _, cmd := range yml.Commands {
-		cc := func(cmd models.Command) *cobra.Command {
-			c = &cobra.Command{
-				Use:   cmd.Cmd,
-				Short: cmd.Description,
-				Run: func(c *cobra.Command, args []string) {
-					handler.NewCommand(Box, cmd, c.Flags())
-				},
+	if _, err := os.Stat(viper.GetString("ODIN_DIR")); !os.IsNotExist(err) {
+		var configModels models.OdinConfig
+		viper.Unmarshal(&configModels)
+
+		yml := internal.ReadYaml(viper.GetString("ODIN_DIR") + "/modules/" + configModels.Config.Default)
+		var c *cobra.Command
+		var a models.Args
+		for _, cmd := range yml.Commands {
+			cc := func(cmd models.Command) *cobra.Command {
+				c = &cobra.Command{
+					Use:   cmd.Cmd,
+					Short: cmd.Description,
+					Run: func(c *cobra.Command, args []string) {
+						handler.NewCommand(Box, cmd, c.Flags())
+					},
+				}
+				for _, a = range cmd.Args {
+					c.PersistentFlags().String(a.Name, a.Value, a.Description)
+				}
+				c.PersistentFlags().String("project", "", "Name of project")
+				return c
 			}
-			for _, a = range cmd.Args {
-				c.PersistentFlags().String(a.Name, a.Value, a.Description)
-			}
-			c.PersistentFlags().String("project", "", "Name of project")
-			return c
+			rootCmd.AddCommand(cc(cmd))
 		}
-		rootCmd.AddCommand(cc(cmd))
 	}
 
 }
